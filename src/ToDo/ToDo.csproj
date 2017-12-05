@@ -15,14 +15,13 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer" Version="2.2.0" />
-    <PackageReference Include="LiveXAML" Version="2.0.13-beta" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.1" />
-    <PackageReference Include="Prism.Autofac.Forms" Version="7.0.0.168-pre" />
+    <PackageReference Include="Prism.Autofac.Forms" Version="7.0.0.269-pre" />
     <PackageReference Include="System.Reactive.Linq" Version="3.1.1" />
     <PackageReference Include="Xam.FormsPlugin.Iconize" Version="1.0.10" />
     <PackageReference Include="Xam.Plugin.Iconize" Version="1.0.10" />
     <PackageReference Include="Xam.Plugins.Forms.ImageCircle" Version="1.8.1" />
-    <PackageReference Include="Xamarin.Forms" Version="2.5.0.77107" />
+    <PackageReference Include="Xamarin.Forms" Version="2.5.0.91635" />
   </ItemGroup>
 
   <ItemGroup>
