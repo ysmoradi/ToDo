@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Navigation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ToDo.DataAccess;
+using ToDo.Events;
 using ToDo.Model;
-using Xamarin.Forms;
 
 namespace ToDo.ViewModels
 {
@@ -16,6 +16,8 @@ namespace ToDo.ViewModels
     {
         private readonly ToDoDbContext _dbContext;
         private readonly INavigationService _navigationService;
+        private readonly IDisposable _toDoItemAddedDisposal;
+        private readonly IDisposable _toDoItemRemovedDisposal;
 
         public DelegateCommand LoadToDoGroups { get; set; }
         public DelegateCommand AddToDoGroup { get; set; }
@@ -29,22 +31,27 @@ namespace ToDo.ViewModels
 
         public string NewToDoGroupName { get; set; }
 
-        public ToDoGroupsViewModel(INavigationService navigationService, ToDoDbContext dbContext)
+        public ToDoGroupsViewModel(INavigationService navigationService,
+            ToDoDbContext dbContext,
+            IEventAggregator eventAggregator)
         {
             _navigationService = navigationService;
 
             _dbContext = dbContext;
 
-            MessagingCenter.Subscribe<ToDoItem>(this, "ToDoItemAdded", (toDoItem) =>
-            {
-                if (toDoItem.GroupId != null)
-                    ToDoGroups.Single(toDoGroup => toDoGroup.Id == toDoItem.GroupId).ActiveToDoItemsCount += 1;
-            });
-            MessagingCenter.Subscribe<ToDoItem>(this, "ToDoItemDeleted", (toDoItem) =>
-            {
-                if (toDoItem.GroupId != null)
-                    ToDoGroups.Single(toDoGroup => toDoGroup.Id == toDoItem.GroupId).ActiveToDoItemsCount -= 1;
-            });
+            _toDoItemAddedDisposal = eventAggregator.GetEvent<ToDoItemAddedEvent>()
+                .Subscribe(addedToDoItemEvent =>
+                {
+                    if (addedToDoItemEvent.AddedToDoItem.GroupId != null)
+                        ToDoGroups.Single(toDoGroup => toDoGroup.Id == addedToDoItemEvent.AddedToDoItem.GroupId).ActiveToDoItemsCount += 1;
+                }, ThreadOption.UIThread, keepSubscriberReferenceAlive: true);
+
+            _toDoItemRemovedDisposal = eventAggregator.GetEvent<ToDoItemRemovedEvent>()
+                .Subscribe(removedToDoItemEvent =>
+                {
+                    if (removedToDoItemEvent.RemovedToDoItem.GroupId != null)
+                        ToDoGroups.Single(toDoGroup => toDoGroup.Id == removedToDoItemEvent.RemovedToDoItem.GroupId).ActiveToDoItemsCount -= 1;
+                }, ThreadOption.UIThread, keepSubscriberReferenceAlive: true);
 
             LoadToDoGroups = new DelegateCommand(async () =>
             {
@@ -116,10 +123,10 @@ namespace ToDo.ViewModels
 
             OpenToDoItems = new DelegateCommand<ToDoGroup>(async (toDoGroup) =>
             {
-                    await navigationService.NavigateAsync("Nav/ToDoItems", new Dictionary<string, object>
+                await navigationService.NavigateAsync("Nav/ToDoItems", new NavigationParameters
                 {
                     { "toDoGroupId", toDoGroup.Id }
-                }.ToNavParams());               
+                });
             });
 
             OpenSearch = new DelegateCommand(async () =>
@@ -134,8 +141,8 @@ namespace ToDo.ViewModels
         }
         public virtual void Destroy()
         {
-            MessagingCenter.Unsubscribe<ToDoItem>(this, "ToDoItemAdded");
-            MessagingCenter.Unsubscribe<ToDoItem>(this, "ToDoItemDeleted");
+            _toDoItemAddedDisposal?.Dispose();
+            _toDoItemRemovedDisposal?.Dispose();
             _dbContext.Dispose();
         }
     }

@@ -1,18 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Prism.AppModel;
+using Prism.Services;
 using System;
 using System.IO;
 using ToDo.Model;
-using Xamarin.Forms;
 
 namespace ToDo.DataAccess
 {
     public class ToDoDbContext : DbContext
     {
+        private readonly IDeviceService _deviceService;
+
+        public ToDoDbContext(IDeviceService deviceService)
+        {
+            _deviceService = deviceService;
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string dbFileName = "toDoDb-V1.db";
 
-            if (Device.RuntimePlatform != Device.UWP)
+            if (_deviceService.RuntimePlatform != RuntimePlatform.UWP)
                 dbFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), dbFileName);
 
             optionsBuilder.UseSqlite($"Filename={dbFileName}");

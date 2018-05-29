@@ -1,15 +1,22 @@
 ﻿using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Navigation;
 using ToDo.DataAccess;
+using ToDo.Events;
 using ToDo.Model;
-using Xamarin.Forms;
 
 namespace ToDo.ViewModels
 {
     public class ToDoItemDetailViewModel : BindableBase, INavigatedAware, IDestructible
     {
+        public ToDoItemDetailViewModel(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
+
         private readonly ToDoDbContext _dbContext;
+        private readonly IEventAggregator _eventAggregator;
 
         public DelegateCommand DeleteToDoItemDetail { get; set; }
 
@@ -40,7 +47,8 @@ namespace ToDo.ViewModels
 
             DeleteToDoItemDetail = new DelegateCommand(async () =>
             {
-                MessagingCenter.Send(ToDoItem, "ToDoItemRemoved");
+                _eventAggregator.GetEvent<ToDoItemRemovedEvent>()
+                    .Publish(new ToDoItemRemovedEvent { RemovedToDoItem = ToDoItem });
                 await navigationService.GoBackAsync();
             });
         }

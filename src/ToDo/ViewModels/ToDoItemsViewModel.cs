@@ -1,15 +1,14 @@
-﻿using Humanizer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Navigation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ToDo.DataAccess;
+using ToDo.Events;
 using ToDo.Model;
-using Xamarin.Forms;
 
 namespace ToDo.ViewModels
 {
@@ -18,6 +17,8 @@ namespace ToDo.ViewModels
         private readonly ToDoDbContext _dbContext;
 
         private readonly INavigationService _navigationService;
+        private readonly IEventAggregator _eventAggregator;
+        public readonly IDisposable _toDoItemRemovedDisposal;
 
         private int? _toDoGroupId;
 
@@ -43,7 +44,7 @@ namespace ToDo.ViewModels
 
         private IQueryable<ToDoItem> GetToDoItemsQuery(IQueryable<ToDoItem> toDoItemsBaseQuery)
         {
-            toDoItemsBaseQuery = _toDoGroupId.HasValue ? toDoItemsBaseQuery.Where(toDo => toDo.GroupId == _toDoGroupId) : toDoItemsBaseQuery.Where(toDo => toDo.ShowInMyDay == true || toDo.GroupId== null);
+            toDoItemsBaseQuery = _toDoGroupId.HasValue ? toDoItemsBaseQuery.Where(toDo => toDo.GroupId == _toDoGroupId) : toDoItemsBaseQuery.Where(toDo => toDo.ShowInMyDay == true || toDo.GroupId == null);
 
             if (LoadAll == false)
                 toDoItemsBaseQuery = toDoItemsBaseQuery.Where(toDo => toDo.IsFinished == false);
@@ -55,6 +56,7 @@ namespace ToDo.ViewModels
 
         public virtual void Destroy()
         {
+            _toDoItemRemovedDisposal.Dispose();
             _dbContext.Dispose();
         }
 
@@ -72,21 +74,22 @@ namespace ToDo.ViewModels
             GroupName = _toDoGroupId.HasValue ? (await _dbContext.ToDoGroups.FindAsync(_toDoGroupId))?.Name : "My day";
         }
 
-            public virtual void OnNavigatedFrom(NavigationParameters parameters)
+        public virtual void OnNavigatedFrom(NavigationParameters parameters)
         {
 
         }
 
-        public ToDoItemsViewModel(INavigationService navigationService, ToDoDbContext dbContext)
+        public ToDoItemsViewModel(INavigationService navigationService, ToDoDbContext dbContext, IEventAggregator eventAggregator)
         {
             _dbContext = dbContext;
-
             _navigationService = navigationService;
+            _eventAggregator = eventAggregator;
 
-            MessagingCenter.Subscribe<ToDoItem>(this, "ToDoItemRemoved", async (toDoItem) =>
-            {
-                DeleteToDoItem.Execute(await _dbContext.ToDoItems.FindAsync(toDoItem.Id));
-            });
+            _toDoItemRemovedDisposal = _eventAggregator.GetEvent<ToDoItemRemovedEvent>()
+                .Subscribe(async toDoItemRemovedEvent =>
+                {
+                    DeleteToDoItem.Execute(await _dbContext.ToDoItems.FindAsync(toDoItemRemovedEvent.RemovedToDoItem.Id));
+                }, ThreadOption.UIThread, keepSubscriberReferenceAlive: true);
 
             LoadToDoItems = new DelegateCommand(async () =>
             {
@@ -157,7 +160,8 @@ namespace ToDo.ViewModels
 
                     ToDoItems.Add(toDoItem);
 
-                    MessagingCenter.Send(toDoItem, "ToDoItemAdded");
+                    _eventAggregator.GetEvent<ToDoItemAddedEvent>()
+                        .Publish(new ToDoItemAddedEvent { AddedToDoItem = toDoItem });
 
                     NewToDoText = "";
                 }
@@ -177,7 +181,8 @@ namespace ToDo.ViewModels
                     IsBusy = true;
                     _dbContext.Remove(toDoItem);
                     await _dbContext.SaveChangesAsync();
-                    MessagingCenter.Send(toDoItem, "ToDoItemDeleted");
+                    _eventAggregator.GetEvent<ToDoItemRemovedEvent>()
+                        .Publish(new ToDoItemRemovedEvent { RemovedToDoItem = toDoItem });
                     ToDoItems.Remove(toDoItem);
                 }
                 finally
@@ -191,10 +196,10 @@ namespace ToDo.ViewModels
 
             NavigateToDetail = new DelegateCommand<ToDoItem>(async (toDoItem) =>
             {
-                await navigationService.NavigateAsync("ToDoItemDetail", new Dictionary<string, object>
+                await navigationService.NavigateAsync("ToDoItemDetail", new NavigationParameters
                 {
                     { "toDoItemId", toDoItem.Id }
-                }.ToNavParams());
+                });
             });
         }
     }
