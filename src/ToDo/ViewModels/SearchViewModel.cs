@@ -15,25 +15,16 @@ namespace ToDo.ViewModels
     {
         private readonly ToDoDbContext _dbContext;
 
-        private string _SearchText;
-        public string SearchText
+        public string SearchText { get; set; }
+
+        public void OnSearchTextChanged()
         {
-            get => _SearchText;
-            set
-            {
-                SetProperty(ref _SearchText, value);
-                _SearchTextSubject.OnNext(_SearchText);
-            }
+            _SearchTextSubject.OnNext(SearchText);
         }
 
         private Subject<string> _SearchTextSubject = new Subject<string>();
 
-        private ObservableCollection<ToDoItem> _ToDoItems;
-        public ObservableCollection<ToDoItem> ToDoItems
-        {
-            get => _ToDoItems;
-            set => SetProperty(ref _ToDoItems, value);
-        }
+        public ObservableCollection<ToDoItem> ToDoItems { get; set; }
 
         public SearchViewModel(ToDoDbContext dbContext)
         {

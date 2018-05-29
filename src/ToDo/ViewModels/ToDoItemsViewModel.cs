@@ -31,42 +31,15 @@ namespace ToDo.ViewModels
 
         public virtual DelegateCommand<ToDoItem> DeleteToDoItem { get; set; }
 
-        private ObservableCollection<ToDoItem> _ToDoItems;
+        public virtual ObservableCollection<ToDoItem> ToDoItems { get; set; }
 
-        public virtual ObservableCollection<ToDoItem> ToDoItems
-        {
-            get => _ToDoItems;
-            set => SetProperty(ref _ToDoItems, value);
-        }
+        public virtual bool IsBusy { get; set; }
 
-        private bool _IsBusy;
-        public virtual bool IsBusy
-        {
-            get => _IsBusy;
-            set => SetProperty(ref _IsBusy, value);
-        }
+        public virtual string NewToDoText { get; set; }
 
-        private string _NewToDoText;
+        public virtual string GroupName { get; set; }
 
-        public virtual string NewToDoText
-        {
-            get => _NewToDoText;
-            set => SetProperty(ref _NewToDoText, value);
-        }
-
-        private string _GroupName;
-        public virtual string GroupName
-        {
-            get => _GroupName;
-            set => SetProperty(ref _GroupName, value);
-        }
-
-        private bool _LoadAll;
-        public virtual bool LoadAll
-        {
-            get => _LoadAll;
-            set => SetProperty(ref _LoadAll, value);
-        }
+        public virtual bool LoadAll { get; set; }
 
         private IQueryable<ToDoItem> GetToDoItemsQuery(IQueryable<ToDoItem> toDoItemsBaseQuery)
         {

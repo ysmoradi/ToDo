@@ -15,12 +15,7 @@ namespace ToDo.ViewModels
 
         private int _toDoItemId;
 
-        private ToDoItem _ToDoItem;
-        public ToDoItem ToDoItem
-        {
-            get => _ToDoItem;
-            set => SetProperty(ref _ToDoItem, value);
-        }
+        public ToDoItem ToDoItem { get; set; }
 
         public virtual async void OnNavigatedTo(NavigationParameters navigationParams)
         {

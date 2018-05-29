@@ -5,62 +5,20 @@ namespace ToDo.Model
 {
     public class ToDoItem : BindableBase
     {
-        private int _Id;
-        public virtual int Id
-        {
-            get => _Id;
-            set => SetProperty(ref _Id, value);
-        }
+        public virtual int Id { get; set; }
 
-        private DateTimeOffset _CreatedDateTime;
+        public virtual DateTimeOffset CreatedDateTime { get; set; }
 
-        public virtual DateTimeOffset CreatedDateTime
-        {
-            get => _CreatedDateTime;
-            set => SetProperty(ref _CreatedDateTime, value);
-        }
+        public virtual DateTimeOffset EndedDateTime { get; set; }
 
-        private DateTimeOffset _EndedDateTime;
+        public virtual string Text { get; set; }
 
-        public virtual DateTimeOffset EndedDateTime
-        {
-            get => _EndedDateTime;
-            set => SetProperty(ref _EndedDateTime, value);
-        }
+        public virtual bool IsFinished { get; set; }
 
-        private string _Text;
-        public virtual string Text
-        {
-            get => _Text;
-            set => SetProperty(ref _Text, value);
-        }
+        public virtual int? GroupId { get; set; }
 
-        private bool _IsFinished;
-        public virtual bool IsFinished
-        {
-            get => _IsFinished;
-            set => SetProperty(ref _IsFinished, value);
-        }
+        public virtual bool ShowInMyDay { get; set; }
 
-        private int? _GroupId;
-        public virtual int? GroupId
-        {
-            get => _GroupId;
-            set => SetProperty(ref _GroupId, value);
-        }
-
-        private bool _ShowInMyDay;
-        public virtual bool ShowInMyDay
-        {
-            get => _ShowInMyDay;
-            set => SetProperty(ref _ShowInMyDay, value);
-        }
-
-        private ToDoGroup _Group;
-        public virtual ToDoGroup Group
-        {
-            get => _Group;
-            set => SetProperty(ref _Group, value);
-        }
+        public virtual ToDoGroup Group { get; set; }
     }
 }

@@ -23,27 +23,11 @@ namespace ToDo.ViewModels
         public DelegateCommand OpenSearch { get; set; }
         public DelegateCommand<ToDoGroup> OpenToDoItems { get; set; }
         public DelegateCommand OpenMyDayItems { get; set; }
+        public ObservableCollection<ToDoGroup> ToDoGroups { get; set; }
 
-        private ObservableCollection<ToDoGroup> _ToDoGroups;
-        public ObservableCollection<ToDoGroup> ToDoGroups
-        {
-            get => _ToDoGroups;
-            set => SetProperty(ref _ToDoGroups, value);
-        }
+        public bool IsBusy { get; set; }
 
-        private bool _IsBusy;
-        public bool IsBusy
-        {
-            get => _IsBusy;
-            set => SetProperty(ref _IsBusy, value);
-        }
-
-        private string _NewToDoGroupName;
-        public string NewToDoGroupName
-        {
-            get => _NewToDoGroupName;
-            set => SetProperty(ref _NewToDoGroupName, value);
-        }
+        public string NewToDoGroupName { get; set; }
 
         public ToDoGroupsViewModel(INavigationService navigationService, ToDoDbContext dbContext)
         {
