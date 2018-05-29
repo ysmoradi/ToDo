@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using Prism;
 using Prism.Autofac;
+using Prism.Ioc;
 using ToDo.DataAccess;
 using ToDo.ViewModels;
 using ToDo.Views;
@@ -24,14 +26,14 @@ namespace ToDo
             NavigationService.NavigateAsync("ToDoGroups/Nav/ToDoItems");
         }
 
-        protected override void RegisterTypes()
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            Builder.RegisterTypeForNavigation<NavigationPage>("Nav");
-            Builder.RegisterTypeForNavigation<ToDoGroupsView, ToDoGroupsViewModel>("ToDoGroups");
-            Builder.RegisterTypeForNavigation<ToDoItemsView, ToDoItemsViewModel>("ToDoItems");
-            Builder.RegisterTypeForNavigation<ToDoItemDetailView, ToDoItemDetailViewModel>("ToDoItemDetail");
-            Builder.RegisterTypeForNavigation<SearchView, SearchViewModel>("Search");
-            Builder.RegisterType<ToDoDbContext>();
+            containerRegistry.RegisterForNavigation<NavigationPage>("Nav");
+            containerRegistry.RegisterForNavigation<ToDoGroupsView, ToDoGroupsViewModel>("ToDoGroups");
+            containerRegistry.RegisterForNavigation<ToDoItemsView, ToDoItemsViewModel>("ToDoItems");
+            containerRegistry.RegisterForNavigation<ToDoItemDetailView, ToDoItemDetailViewModel>("ToDoItemDetail");
+            containerRegistry.RegisterForNavigation<SearchView, SearchViewModel>("Search");
+            containerRegistry.Register<ToDoDbContext>();
         }
     }
 }

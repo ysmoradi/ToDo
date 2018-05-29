@@ -1,12 +1,12 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using Autofac;
 using FormsPlugin.Iconize.Droid;
 using ImageCircle.Forms.Plugin.Droid;
 using Plugin.Iconize;
 using Plugin.Iconize.Fonts;
-using Prism.Autofac;
+using Prism;
+using Prism.Ioc;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -36,7 +36,7 @@ namespace ToDo.Droid
 
     public class ToDoInitializer : IPlatformInitializer
     {
-        public void RegisterTypes(ContainerBuilder container)
+        public void RegisterTypes(IContainerRegistry containerRegistry)
         {
 
         }
