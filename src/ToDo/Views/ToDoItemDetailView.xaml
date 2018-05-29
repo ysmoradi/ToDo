@@ -78,7 +78,8 @@
                     TextColor="LightGray" />
             </Frame>
             <StackLayout
-                Margin="100,5,0,0"
+                BackgroundColor="LightGray"
+                CompressedLayout.IsHeadless="False"
                 Orientation="Horizontal"
                 VerticalOptions="EndAndExpand">
                 <Label
@@ -93,6 +94,7 @@
                     Text="fa-trash-o"
                     WidthRequest="40" />
             </StackLayout>
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -78,14 +78,6 @@
                                     HorizontalOptions="StartAndExpand"
                                     Text="{Binding Text}"
                                     VerticalTextAlignment="Center" />
-                                <iconize:IconButton
-                                    Command="{Binding BindingContext.DeleteToDoItem, Source={x:Reference Name=ToDoItemsView}}"
-                                    CommandParameter="{Binding .}"
-                                    FontSize="20"
-                                    HorizontalOptions="Start"
-                                    Text="fa-trash-o"
-                                    TextColor="Gray"
-                                    WidthRequest="50" />
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

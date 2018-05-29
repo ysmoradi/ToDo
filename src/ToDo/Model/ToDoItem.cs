@@ -49,6 +49,13 @@ namespace ToDo.Model
             set => SetProperty(ref _GroupId, value);
         }
 
+        private bool _ShowInMyDay;
+        public virtual bool ShowInMyDay
+        {
+            get => _ShowInMyDay;
+            set => SetProperty(ref _ShowInMyDay, value);
+        }
+
         private ToDoGroup _Group;
         public virtual ToDoGroup Group
         {

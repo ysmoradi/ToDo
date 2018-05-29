@@ -16,7 +16,12 @@
             </ContentPage.Behaviors>
             <ContentPage.Content>
                 <StackLayout Padding="5">
-                    <StackLayout Margin="5" Orientation="Horizontal">
+                    <iconize:IconButton
+                        HorizontalOptions="Start"
+                        Text="fa-bars"
+                        TextColor="#1976D2"
+                        WidthRequest="50" />
+                    <StackLayout Margin="5,5,5,0" Orientation="Horizontal">
                         <StackLayout HorizontalOptions="StartAndExpand" Orientation="Horizontal">
                             <controls:CircleImage
                                 Aspect="AspectFill"
@@ -30,13 +35,26 @@
                         </StackLayout>
                         <iconize:IconButton
                             Command="{Binding OpenSearch}"
-                            FontSize="25"
                             HorizontalOptions="End"
                             Text="fa-search"
                             TextColor="Gray" />
                     </StackLayout>
                     <BoxView HeightRequest="1" Color="LightGray" />
-                    <ListView Margin="5" ItemsSource="{Binding ToDoGroups}">
+                    <StackLayout CompressedLayout.IsHeadless="False" Orientation="Horizontal">
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenMyDayItems}" />
+                        </StackLayout.GestureRecognizers>
+                        <iconize:IconLabel
+                            FontSize="25"
+                            Text="fa-home"
+                            TextColor="#4795f4"
+                            WidthRequest="30" />
+                        <Label
+                            Margin="5,0,0,0"
+                            FontSize="18"
+                            Text="MyDay" />
+                    </StackLayout>
+                    <ListView ItemsSource="{Binding ToDoGroups}">
                         <x:Arguments>
                             <ListViewCachingStrategy>RecycleElementAndDataTemplate</ListViewCachingStrategy>
                         </x:Arguments>
@@ -55,12 +73,21 @@
                                             CommandParameter="{Binding .}"
                                             Text="Delete" />
                                     </ViewCell.ContextActions>
-                                    <StackLayout Orientation="Horizontal">
-                                        <Label Text="{Binding Name}" VerticalTextAlignment="Center" />
+                                    <StackLayout Margin="5" Orientation="Horizontal">
+                                        <iconize:IconLabel
+                                            FontSize="25"
+                                            Text="fa-th-list"
+                                            TextColor="#4795f4"
+                                            WidthRequest="30" />
                                         <Label
+                                            Margin="5,0,0,0"
+                                            FontSize="18"
+                                            Text="{Binding Name}" />
+                                        <Label
+                                            Margin="0,0,10,0"
+                                            FontSize="15"
                                             HorizontalOptions="EndAndExpand"
-                                            Text="{Binding ActiveToDoItemsCount}"
-                                            VerticalTextAlignment="Center" />
+                                            Text="{Binding ActiveToDoItemsCount}"/>
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>
@@ -69,7 +96,6 @@
                     <StackLayout Orientation="Horizontal">
                         <iconize:IconButton
                             Command="{Binding AddToDoGroup}"
-                            FontSize="25"
                             HorizontalOptions="Start"
                             Text="fa-plus-circle"
                             TextColor="Gray"

@@ -1,6 +1,9 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
 using Prism.Navigation;
 using ToDo.DataAccess;
+using ToDo.Model;
+using Xamarin.Forms;
 
 namespace ToDo.ViewModels
 {
@@ -8,20 +11,22 @@ namespace ToDo.ViewModels
     {
         private readonly ToDoDbContext _dbContext;
 
+        public DelegateCommand DeleteToDoItemDetail { get; set; }
+
         private int _toDoItemId;
 
-        private string _ToDoItemName;
-        public virtual string ToDoItemName
+        private ToDoItem _ToDoItem;
+        public ToDoItem ToDoItem
         {
-            get => _ToDoItemName;
-            set => SetProperty(ref _ToDoItemName, value);
+            get => _ToDoItem;
+            set => SetProperty(ref _ToDoItem, value);
         }
 
         public virtual async void OnNavigatedTo(NavigationParameters navigationParams)
         {
             _toDoItemId = navigationParams.GetValue<int>("toDoItemId");
 
-            ToDoItemName = (await _dbContext.ToDoItems.FindAsync(_toDoItemId))?.Text;
+            ToDoItem = await _dbContext.ToDoItems.FindAsync(_toDoItemId);
         }
 
         public virtual void OnNavigatedFrom(NavigationParameters parameters)
@@ -37,6 +42,12 @@ namespace ToDo.ViewModels
         public ToDoItemDetailViewModel(ToDoDbContext dbContext)
         {
             _dbContext = dbContext;
+
+            DeleteToDoItemDetail = new DelegateCommand(async () =>
+            {
+                MessagingCenter.Send(ToDoItem, "ToDoItemRemoved");
+                await navigationService.GoBackAsync();
+            });
         }
     }
 }

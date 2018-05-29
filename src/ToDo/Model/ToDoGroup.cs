@@ -29,6 +29,13 @@ namespace ToDo.Model
             set => SetProperty(ref _Name, value);
         }
 
+        private string _Icon;
+        public virtual string Icon
+        {
+            get => _Icon;
+            set => SetProperty(ref _Icon, value);
+        }
+
         private ObservableCollection<ToDoItem> _ToDoItems;
 
         public virtual ObservableCollection<ToDoItem> ToDoItems

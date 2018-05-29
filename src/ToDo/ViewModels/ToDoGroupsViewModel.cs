@@ -22,6 +22,7 @@ namespace ToDo.ViewModels
         public DelegateCommand<ToDoGroup> DeleteToDoGroup { get; set; }
         public DelegateCommand OpenSearch { get; set; }
         public DelegateCommand<ToDoGroup> OpenToDoItems { get; set; }
+        public DelegateCommand OpenMyDayItems { get; set; }
 
         private ObservableCollection<ToDoGroup> _ToDoGroups;
         public ObservableCollection<ToDoGroup> ToDoGroups
@@ -131,15 +132,20 @@ namespace ToDo.ViewModels
 
             OpenToDoItems = new DelegateCommand<ToDoGroup>(async (toDoGroup) =>
             {
-                await navigationService.NavigateAsync("Nav/ToDoItems", new Dictionary<string, object>
+                    await navigationService.NavigateAsync("Nav/ToDoItems", new Dictionary<string, object>
                 {
                     { "toDoGroupId", toDoGroup.Id }
-                }.ToNavParams());
+                }.ToNavParams());               
             });
 
             OpenSearch = new DelegateCommand(async () =>
             {
                 await navigationService.NavigateAsync("Nav/Search");
+            });
+
+            OpenMyDayItems = new DelegateCommand(async () =>
+            {
+                await navigationService.NavigateAsync("Nav/ToDoItems");
             });
         }
         public virtual void Destroy()
